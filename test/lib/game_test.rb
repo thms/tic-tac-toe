@@ -1,6 +1,7 @@
 require 'test_helper'
 require_relative './../../lib/game'
 require_relative './../../lib/random_player'
+require_relative './../../lib/min_max_player'
 
 class GameTest < ActiveSupport::TestCase
 
@@ -29,6 +30,14 @@ class GameTest < ActiveSupport::TestCase
     game = Game.new player_one, player_two
     game.make_move(game.player_one)
     assert_equal 1, game.board.state.sum
+    game.board.draw
+  end
+
+  test 'random player against min_max_player should loose' do
+    player_one = MinMaxPlayer.new
+    player_two = RandomPlayer.new
+    game = Game.new player_one, player_two
+    result = game.play
     game.board.draw
   end
 end
