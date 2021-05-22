@@ -11,6 +11,6 @@ class RandomPlayer
   end
 
   def select_move(board)
-    board.each_index.select {|i| board[i] == 0}.sample
+    board.possible_moves.sample
   end
 end

@@ -8,14 +8,14 @@ class GameTest < ActiveSupport::TestCase
     player_one = RandomPlayer.new
     player_two = RandomPlayer.new
     game = Game.new player_one, player_two
-    assert_equal [0] * 9, game.board
+    assert_equal [0] * 9, game.board.state
   end
 
   test 'should recognize winning combination' do
     player_one = RandomPlayer.new
     player_two = RandomPlayer.new
     game = Game.new player_one, player_two
-    game.board = [1,1,1,0,0,0,0,0,0]
+    game.board.state = [1,1,1,0,0,0,0,0,0]
     game.player_one.moves << 0
     game.player_one.moves << 1
     game.player_one.moves << 2
@@ -28,7 +28,7 @@ class GameTest < ActiveSupport::TestCase
     player_two = RandomPlayer.new
     game = Game.new player_one, player_two
     game.make_move(game.player_one)
-    assert_equal 1, game.board.sum
-    game.draw_board
+    assert_equal 1, game.board.state.sum
+    game.board.draw
   end
 end

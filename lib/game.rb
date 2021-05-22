@@ -1,6 +1,6 @@
+require_relative './board'
 class Game
 
-  WINNING_MOVES = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]]
   attr_accessor :board
   attr_accessor :player_one
   attr_accessor :player_two
@@ -8,8 +8,7 @@ class Game
 
   STONES = {1.0 => 'x', -1.0 => 'o', 0 => ' '}
   def initialize(player_one, player_two, params = {display_output: false})
-    #@board = [0, 1, 2, 3, 4, 5, 6, 7, 8]
-    @board = [0] * 9
+    @board = Board.new
     @player_one = player_one
     @player_one.stone = 'x'
     @player_one.value = 1.0
@@ -40,38 +39,26 @@ class Game
 
   # use a random strategy to place a stone
   def make_move(player)
-    previous_board = @board.clone
+    # clone the board state, becuase the training data must have the state before the  move and the move.
+    previous_state = @board.state.clone
     position = player.select_move(@board)
-    @board[position] = player.value
+    @board.state[position] = player.value
     player.moves << position
     puts "#{player.stone} set on #{position}" if @display_output
-    # old version: board, player and move does not perform well
-    # return [@board, player[:value], position].flatten
     move = [0] * 9
-    move [position] = player.value
-    return [previous_board, move].flatten
+    move[position] = player.value
+    return [previous_state, move].flatten
   end
 
   # determine if the current board presents a win, and for whom
   def has_winner?
     result = nil
-    if WINNING_MOVES.any? {|position| (position - @player_one.moves).empty?}
+    if @board.is_win?(1.0)
       result = @player_one
-    elsif WINNING_MOVES.any? {|position| (position - @player_two.moves).empty?}
+    elsif @board.is_win?(-1.0)
       result = @player_two
     end
     return result
   end
 
-  def draw_board
-    puts "#{STONES[@board[0]]} | #{STONES[@board[1]]} | #{STONES[@board[2]]}"
-    puts "----------"
-    puts "#{STONES[@board[3]]} | #{STONES[@board[4]]} | #{STONES[@board[5]]}"
-    puts "----------"
-    puts "#{STONES[@board[6]]} | #{STONES[@board[7]]} | #{STONES[@board[8]]}"
-  end
 end
-# Play a game and disaply the output
-# game = Game.new(display_out: true)
-# game.play
-# game.draw_board
