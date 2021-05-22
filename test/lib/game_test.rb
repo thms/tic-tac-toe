@@ -51,8 +51,8 @@ class GameTest < ActiveSupport::TestCase
   end
 
   test 'MinMax player against MinMax should result in a draw' do
-    player_one = MinMaxPlayer.new
-    player_two = MinMaxPlayer.new
+    player_one = MinMaxPlayer.new(true)
+    player_two = MinMaxPlayer.new(true)
     game = Game.new player_one, player_two
     log, outcome = game.play
     assert_equal 0, outcome

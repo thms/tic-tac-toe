@@ -1,16 +1,21 @@
+# Classic min max algorithm player, looking at every possible future and
+# calcuating the best possible outcome.
+#
 class MinMaxPlayer
 
   attr_accessor :value
   attr_accessor :moves
   attr_accessor :stone
   attr_accessor :cache
+  attr_accessor :random # if true, player picks randomly from available equally well performing moves
   WINNING_POSITIONS = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]]
 
-  def initialize
+  def initialize(random = false)
     @value = nil
     @stone = nil
     @moves = []
     @cache = {}
+    @random = random
   end
 
   def select_move(board)
@@ -43,10 +48,24 @@ class MinMaxPlayer
       puts moves
     end
     # evaluate moves to determine the best possible move and only return that
+    # if more than one move leads to the best possible outcome, pick one at random
     puts "moves: #{moves}"
     if moves.size > 1
-      result = [moves.sort_by {|k, v| v}.last].to_h if value == 1.0
-      result = [moves.sort_by {|k, v| v}.first].to_h if value == -1.0
+      if value == 1.0 # maximising player
+        if @random
+          best_outcome = moves.sort_by {|k, v| v}.last.last
+          result = [moves.select {|k, v| v == best_outcome}.to_a.sample].to_h
+        else
+          result = [moves.sort_by {|k, v| v}.last].to_h
+        end
+      elsif value == -1.0 # minimizing player
+        if @random
+          best_outcome = moves.sort_by {|k, v| v}.first.last
+          result = [moves.select {|k, v| v == best_outcome}.to_a.sample].to_h
+        else
+          result = [moves.sort_by {|k, v| v}.first].to_h
+        end
+      end
     else
       result = moves
     end
