@@ -1,9 +1,9 @@
 require 'test_helper'
 require 'ruby-fann'
-
+# trying different stuff
 class TrainingTest < ActiveSupport::TestCase
 
-  test "Should train the model" do
+  test "Should train the model blabla" do
 
     inputs = [[1.0, 1.0, -1.0, -1.0, 1.0, 0, -1.0, -1.0, 0, 0,0,0,0,0,0,0,0,1.0],
     [1.0, 1.0, -1.0, -1.0, 1.0, 0, -1.0, -1.0, 0, 0,0,0,0,0,1.0,0,0,0]
