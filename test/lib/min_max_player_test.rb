@@ -24,6 +24,47 @@ class MinMaxPlayerTest < ActiveSupport::TestCase
     player.value = -1.0
     board = [1.0, 1.0, -1.0 ,-1.0, 1.0,1.0,0,0,-1.0]
     result = player.select_move(board)
-    assert_equal({6 => 0}, result)
+    assert_equal({7 => 0}, result)
   end
+
+  test "should create a loss with three moves left" do
+    player = MinMaxPlayer.new
+    player.value = 1.0
+    board = [-1.0, 0, -1.0 ,-1.0, 1.0,1.0,0,0,1.0]
+    result = player.select_move(board)
+    assert_equal({7 => -1.0}, result)
+  end
+
+  test "should create a draw with three moves left" do
+    player = MinMaxPlayer.new
+    player.value = 1.0
+    board = [1.0, 0, -1.0 ,-1.0, 1.0,1.0,0,0,-1.0]
+    result = player.select_move(board)
+    assert_equal({7 => 0}, result)
+  end
+
+  test "must block immeditate winning move do" do
+    player = MinMaxPlayer.new
+    player.value = 1.0
+    board = [1.0, 0, 0 ,1.0, -1.0,0,-1.0,0,0]
+    result = player.select_move(board)
+    assert_equal({2 => 0}, result)
+  end
+
+  test "next move 1" do
+    player = MinMaxPlayer.new
+    player.value = -1.0
+    board = [1.0, 0, 1.0 ,1.0, -1.0,0,-1.0,0,0]
+    result = player.select_move(board)
+    assert_equal({1 => 0}, result)
+  end
+
+  test "next move 2" do
+    player = MinMaxPlayer.new
+    player.value = 1.0
+    board = [1.0, -1.0, 1.0 ,1.0, -1.0,0,-1.0,0,0]
+    result = player.select_move(board)
+    assert_equal({1 => 0}, result)
+  end
+
 end
