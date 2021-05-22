@@ -35,5 +35,14 @@ class Board
     puts "#{STONES[@state[6]]} | #{STONES[@state[7]]} | #{STONES[@state[8]]}"
   end
 
+  # calculate a unique hash for the board's state
+  def hash_value
+    result = 0
+    for i in 0..8 do
+      result *= 3
+      result += @state[i]
+    end
+    result
+  end
 
 end

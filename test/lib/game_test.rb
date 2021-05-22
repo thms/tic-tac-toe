@@ -40,4 +40,23 @@ class GameTest < ActiveSupport::TestCase
     result = game.play
     game.board.draw
   end
+
+
+  test 'random player against random should do sth' do
+    player_one = RandomPlayer.new
+    player_two = RandomPlayer.new
+    game = Game.new player_one, player_two
+    result = game.play
+    game.board.draw
+  end
+
+  test 'MinMax player against MinMax should result in a draw' do
+    player_one = MinMaxPlayer.new
+    player_two = MinMaxPlayer.new
+    game = Game.new player_one, player_two
+    log, outcome = game.play
+    assert_equal 0, outcome
+    game.board.draw
+  end
+
 end

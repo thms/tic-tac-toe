@@ -20,6 +20,8 @@ class MinMaxPlayer
   # returns best outcome move and value for the current player
   # {4 => 1.0}
   def one_round(board, value)
+    cache_key = board.hash_value
+    return @cache[cache_key] if @cache.key? cache_key
     possible_moves = board.possible_moves
     puts "#{value}, #{possible_moves}"
     moves = {}
@@ -43,11 +45,13 @@ class MinMaxPlayer
     # evaluate moves to determine the best possible move and only return that
     puts "moves: #{moves}"
     if moves.size > 1
-      return [moves.sort_by {|k, v| v}.last].to_h if value == 1.0
-      return [moves.sort_by {|k, v| v}.first].to_h if value == -1.0
+      result = [moves.sort_by {|k, v| v}.last].to_h if value == 1.0
+      result = [moves.sort_by {|k, v| v}.first].to_h if value == -1.0
     else
-      return moves
+      result = moves
     end
+    @cache[cache_key] = result unless @cache.key?(cache_key)
+    return result
   end
 
   def is_win?(board, value)
@@ -61,4 +65,6 @@ class MinMaxPlayer
   def deep_clone(object)
     Marshal.load(Marshal.dump(object))
   end
+
+
 end
