@@ -8,18 +8,27 @@ class MinMaxPlayer
   attr_accessor :stone
   attr_accessor :cache
   attr_accessor :random # if true, player picks randomly from available equally well performing moves
+  attr_accessor :error_rate
   WINNING_POSITIONS = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]]
 
-  def initialize(random = false)
+  def initialize(random = false, error_rate = 0.0)
     @value = nil
     @stone = nil
     @moves = []
     @cache = {}
     @random = random
+    @error_rate = error_rate / 0.8# how often the player picks a random move, rather than a perfect move.
   end
 
   def select_move(board)
-    one_round(board, @value).keys.first
+    # select best possible move
+    move = one_round(board, @value).keys.first
+    # occasionally make a mistake and pick a random move
+    # average possible moves = (1+2+3+4+5+6+7+8+9)/9 = 5
+    # so effective error rate is error_rate * 0.8
+    # so to get the the correct error rate divide by 0.8
+    move = board.possible_moves.sample if rand < @error_rate
+    move
   end
 
   # returns best outcome move and value for the current player
@@ -28,10 +37,10 @@ class MinMaxPlayer
     cache_key = board.hash_value
     return @cache[cache_key] if @cache.key? cache_key
     possible_moves = board.possible_moves
-    puts "#{value}, #{possible_moves}"
+    # puts "#{value}, #{possible_moves}"
     moves = {}
     possible_moves.each do |move|
-      puts "Evaluating move #{move} for player #{value}"
+      # puts "Evaluating move #{move} for player #{value}"
       # make the move, test for a win / draw, if so, mark move as win/draw and return reward, otherwise run one round from here and propagate result back up.
       new_board = deep_clone(board)
       new_board.state[move] = value
@@ -45,11 +54,11 @@ class MinMaxPlayer
         # iterate into the future for the other player
         moves[move] = one_round(new_board, -1.0 * value).values.first
       end
-      puts moves
+      # puts moves
     end
     # evaluate moves to determine the best possible move and only return that
     # if more than one move leads to the best possible outcome, pick one at random
-    puts "moves: #{moves}"
+    # puts "moves: #{moves}"
     if moves.size > 1
       if value == 1.0 # maximising player
         if @random

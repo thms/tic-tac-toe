@@ -49,21 +49,22 @@ class TQPlayer
     # TODO: all through the lens of the current player?
     learning_rate = 0.9
     discount = 0.95
-    entry = log.pop
-    hash_value = entry[0]
-    action = entry[3]
-    # initialise q_table if not yet done
-    @q_table[hash_value] = [0.6] * 9 if @q_table[hash_value].nil?
-    # set reward for last action of the game
-    @q_table[hash_value][action] = (1.0 - learning_rate) * @q_table[hash_value][action] + learning_rate * outcome
-    # Determine max value over all posible actions in that state
-    max_a = @q_table[hash_value].max
+    # entry = log.pop
+    # hash_value = entry[0]
+    # action = entry[3]
+    # # initialise q_table if not yet done
+    # @q_table[hash_value] = [0.6] * 9 if @q_table[hash_value].nil?
+    # # set reward for last action of the game
+    # @q_table[hash_value][action] = (1.0 - learning_rate) * @q_table[hash_value][action] + learning_rate * outcome
+    # # Determine max value over all posible actions in that state
+    # max_a = @q_table[hash_value].max
+    max_a = outcome / discount
     while entry = log.pop
       hash_value = entry[0]
       action = entry[3]
       # initialise q_table if not yet done
       @q_table[hash_value] = [0.6] * 9 if @q_table[hash_value].nil?
-      # update with dsicount and learning
+      # update with discount and learning rate
       @q_table[hash_value][action] = (1.0 - learning_rate) * @q_table[hash_value][action] + learning_rate * discount * max_a
       max_a = @q_table[hash_value].max
     end
