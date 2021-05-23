@@ -2,6 +2,7 @@ require 'test_helper'
 require_relative './../../lib/game'
 require_relative './../../lib/random_player'
 require_relative './../../lib/min_max_player'
+require_relative './../../lib/t_q_player'
 
 class GameTest < ActiveSupport::TestCase
 
