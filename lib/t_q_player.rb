@@ -47,7 +47,7 @@ class TQPlayer
   # log does not include the final state of the game, since it is not needed for training
   def update_q_table(log, outcome)
     # TODO: all through the lens of the current player?
-    learning_rate = 0.9
+    learning_rate = 0.1 # TODO: This is probably much too large, should be more like 0.01 or so
     discount = 0.95
     # entry = log.pop
     # hash_value = entry[0]

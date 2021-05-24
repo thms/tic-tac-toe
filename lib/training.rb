@@ -1,3 +1,4 @@
+# Initial version of a neural network training to be able to play the game, but not particularly good.
 #
 require 'ruby-fann'
 require_relative './game'
