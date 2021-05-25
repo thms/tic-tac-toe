@@ -163,7 +163,7 @@ class NNPlayerTest < ActiveSupport::TestCase
 
   test "should learn from a number of games against the min max player when going second" do
     #skip
-    # best we can hope for is that NN learns how to get to a draw
+    # best we can hope for is that NN learns how to get to a draw (and he does after about 1 million games)
     player_one = NNPlayer.new
     player_two = MinMaxPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}

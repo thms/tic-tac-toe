@@ -17,8 +17,8 @@ Implementation of classic tabular Q function. The quality function expresses the
 The player learns it by playing and observing the outcome of each game - see the test code for feedback loops.
 Depending on initialisation of the Q table,  player can learn get to perfect draws against itself (init with 0.3), or to never loose against itself and often win if it goes first
 
-## TODO
-Symmetric learning for the NN player
+## NNPlayer
+A fairly simple neural network with one hidden layer that can learn while playing from the other players or against itself. With the right amount of training it will get to all draws against min max and TQ
 
 ## Using the code base
 This is exploratory code only, not of production quality or with a hint of anything final.
