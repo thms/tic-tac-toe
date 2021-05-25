@@ -47,7 +47,7 @@ class TQPlayer
   # log does not include the final state of the game, since it is not needed for training
   def update_q_table(log, outcome)
     # TODO: all through the lens of the current player?
-    learning_rate = 0.1 # TODO: This is probably much too large, should be more like 0.01 or so
+    learning_rate = 0.1
     discount = 0.95
     # entry = log.pop
     # hash_value = entry[0]
@@ -58,14 +58,18 @@ class TQPlayer
     # @q_table[hash_value][action] = (1.0 - learning_rate) * @q_table[hash_value][action] + learning_rate * outcome
     # # Determine max value over all posible actions in that state
     # max_a = @q_table[hash_value].max
-    max_a = outcome / discount
+    max_a = outcome
     while entry = log.pop
       hash_value = entry[0]
       action = entry[3]
       # initialise q_table if not yet done
       @q_table[hash_value] = [0.6] * 9 if @q_table[hash_value].nil?
-      # update with discount and learning rate
-      @q_table[hash_value][action] = (1.0 - learning_rate) * @q_table[hash_value][action] + learning_rate * discount * max_a
+      # update with discount and learning rate, unless it is the final outcome, then use its value straight up
+      if max_a == outcome
+        @q_table[hash_value][action] = max_a
+      else
+        @q_table[hash_value][action] = (1.0 - learning_rate) * @q_table[hash_value][action] + learning_rate * discount * max_a
+      end
       max_a = @q_table[hash_value].max
     end
   end

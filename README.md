@@ -18,7 +18,7 @@ The player learns it by playing and observing the outcome of each game - see the
 Depending on initialisation of the Q table,  player can learn get to perfect draws against itself (init with 0.3), or to never loose against itself and often win if it goes first
 
 ## TODO
-Redo the neural network portion to learn the Q Function with the appropriate inputs and outputs
+Symmetric learning for the NN player
 
 ## Using the code base
 This is exploratory code only, not of production quality or with a hint of anything final.

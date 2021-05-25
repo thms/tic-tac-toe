@@ -73,8 +73,8 @@ class NNPlayer
   # For each observation = board state and q_values where only the one of the move actually taken is updated
   # run one iteration of the training
   def update_neural_network(outcome)
-    # push the final reward onto the nextmax log
-    @next_q_max_log << outcome
+    # push the final reward onto the nextmax log from the point of view of the player
+    @next_q_max_log << outcome * @value
     index = 0
     while index < @moves.size
       inputs = board_to_nn_inputs(@state_log[index])

@@ -70,6 +70,7 @@ class TQPlayerTest < ActiveSupport::TestCase
 
   test "should learn from a number of games against the random player when going first" do
     skip
+    puts 'TQ : Random'
     player_one = TQPlayer.new
     player_two = RandomPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
@@ -99,6 +100,7 @@ class TQPlayerTest < ActiveSupport::TestCase
 
   test "should learn from a number of games against the random player when going second" do
     skip
+    puts 'Random : TQ'
     player_one = TQPlayer.new
     player_two = RandomPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
@@ -144,7 +146,7 @@ class TQPlayerTest < ActiveSupport::TestCase
     # Typically 25 draws to 75 losses
 
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
-    10000.times do
+    1000.times do
       player_one.moves = []
       player_two.moves = []
       game = Game.new player_one, player_two
@@ -270,7 +272,6 @@ class TQPlayerTest < ActiveSupport::TestCase
   end
 
   test "should learn from a number of games against the tq player when going first" do
-    skip
     # we'll need to train both players during the training phase
     # when we train them symmetrically, and initialize the q_tables with 0.3 they learn how to play perfectly well against each other and produce only draws
     # when training symmetrically with initialization of 0.6, whichever player starts the game wins most of the time, the second player never wins and we have 5% - 10% draws

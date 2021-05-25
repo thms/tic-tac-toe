@@ -74,6 +74,7 @@ class NNPlayerTest < ActiveSupport::TestCase
 
   test "should learn from a number of games against the random player when going first" do
     skip
+    puts 'NN : Random'
     player_one = NNPlayer.new
     player_two = RandomPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
@@ -101,7 +102,37 @@ class NNPlayerTest < ActiveSupport::TestCase
     puts "Testing stats #{stats}"
   end
 
+  test "should learn from a number of games against the random player when going second" do
+    puts 'Random : NN'
+    player_one = NNPlayer.new
+    player_two = RandomPlayer.new
+    stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
+    50000.times do
+      player_one.moves = []
+      player_two.moves = []
+      game = Game.new player_two, player_one
+      log, outcome = game.play
+      stats[outcome] += 1
+      # use players own log to train the table
+      player_one.update_neural_network(outcome)
+      # game.board.draw
+    end
+    puts "Training stats #{stats}"
+    # should be very likely to win the next games
+    stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
+    100.times do
+      player_one.moves = []
+      player_two.moves = []
+      game = Game.new player_two, player_one
+      log, outcome = game.play
+      stats[outcome] += 1
+    end
+    #assert_operator 10, :>, stats[-1.0]
+    puts "Testing stats #{stats}"
+  end
+
   test "should learn from a number of games against the min max player when going first" do
+    skip
     # so this gets to about 20% draws after 10k games and does not improve thereafter (tried up to 500k games)
     player_one = NNPlayer.new
     player_two = MinMaxPlayer.new
