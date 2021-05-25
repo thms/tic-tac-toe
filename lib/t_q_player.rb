@@ -3,6 +3,7 @@
 # we'll iniitialize the q_table as the player plays, to muach hassle to do it up front
 class TQPlayer
 
+  INITIAL_Q_VALUE = 0.3
   attr_accessor :q_table
   attr_accessor :value
   attr_accessor :moves
@@ -25,7 +26,7 @@ class TQPlayer
     # so we'll initialize it here
     moves = @q_table[board.hash_value].clone
     if moves.nil?
-      @q_table[board.hash_value] = [0.6] * 9
+      @q_table[board.hash_value] = [INITIAL_Q_VALUE] * 9
       # and pick a random move from the possible ones
       move = possible_moves.sample
     else
@@ -45,25 +46,15 @@ class TQPlayer
   # action is 0..8
   # player = 1.0 or -1.0
   # log does not include the final state of the game, since it is not needed for training
-  def update_q_table(log, outcome)
-    # TODO: all through the lens of the current player?
+  def update_q_table(outcome)
     learning_rate = 0.1
     discount = 0.95
-    # entry = log.pop
-    # hash_value = entry[0]
-    # action = entry[3]
-    # # initialise q_table if not yet done
-    # @q_table[hash_value] = [0.6] * 9 if @q_table[hash_value].nil?
-    # # set reward for last action of the game
-    # @q_table[hash_value][action] = (1.0 - learning_rate) * @q_table[hash_value][action] + learning_rate * outcome
-    # # Determine max value over all posible actions in that state
-    # max_a = @q_table[hash_value].max
-    max_a = outcome
-    while entry = log.pop
+    max_a = (1.0 + @value * outcome)/2.0
+    while entry = @log.pop
       hash_value = entry[0]
       action = entry[3]
       # initialise q_table if not yet done
-      @q_table[hash_value] = [0.6] * 9 if @q_table[hash_value].nil?
+      @q_table[hash_value] = [INITIAL_Q_VALUE] * 9 if @q_table[hash_value].nil?
       # update with discount and learning rate, unless it is the final outcome, then use its value straight up
       if max_a == outcome
         @q_table[hash_value][action] = max_a

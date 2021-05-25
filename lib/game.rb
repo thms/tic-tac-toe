@@ -33,7 +33,6 @@ class Game
     end
     outcome = has_winner? ? @winner.value : 0.0
     # append the outcome to each row of the log
-    log
     return log, outcome
   end
 

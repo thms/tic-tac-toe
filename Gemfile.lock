@@ -1,3 +1,9 @@
+GIT
+  remote: https://github.com/thms/ruby-fann.git
+  revision: f5aabac28b00e5b1f65e30ed9a348b0efc14bc01
+  specs:
+    ruby-fann (1.3.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -43,7 +49,6 @@ GEM
     rb-fsevent (0.11.0)
     rb-inotify (0.10.1)
       ffi (~> 1.0)
-    ruby-fann (1.3.0)
     shellany (0.0.1)
     thor (1.1.0)
     tzinfo (2.0.4)
@@ -58,7 +63,7 @@ DEPENDENCIES
   byebug
   guard
   guard-minitest (~> 2.4, >= 2.4.6)
-  ruby-fann
+  ruby-fann!
 
 RUBY VERSION
    ruby 2.7.0p0

@@ -20,6 +20,7 @@ class NNPlayer
   attr_accessor :state_log # stores the board state
   attr_accessor :q_values_log # stores the q values as calucated by the NN before the move is made
   attr_accessor :next_q_max_log # stores the max Q of the next state, and the final reward
+  attr_accessor :log
 
   def initialize(random = false)
     @value = nil
@@ -29,12 +30,12 @@ class NNPlayer
     @state_log = []
     @q_values_log = []
     @next_q_max_log = []
+    @log = []
     @random = random
     @fann = RubyFann::Standard.new(:num_inputs=>27, :hidden_neurons=>[243], :num_outputs=>9)
     @fann.set_learning_rate(0.1) # default value is 0.7
     @fann.set_training_algorithm(:incremental)
-    # Hidden layer should be set to Relu, but they don't seem to have that, but given that input values are 0 or 1, that might be just the same
-    @fann.set_activation_function_layer(:linear, 1)
+    @fann.set_activation_function_layer(:relu, 1)
   end
 
   def reset_logs
@@ -74,16 +75,18 @@ class NNPlayer
   # run one iteration of the training
   def update_neural_network(outcome)
     # push the final reward onto the nextmax log from the point of view of the player
-    @next_q_max_log << outcome * @value
-    index = 0
-    while index < @moves.size
+    @next_q_max_log << (@value * outcome + 1.0)/2.0
+    @log << @next_q_max_log
+    @log << ['--']
+    index = @moves.size - 1
+    while index >= 0
       inputs = board_to_nn_inputs(@state_log[index])
       outputs = @q_values_log[index]
       # replace the q value of the move made with the discounted observation
       outputs[@moves[index]] = DISCOUNT * @next_q_max_log[index]
       # do one training step
       @fann.train(inputs, outputs)
-      index += 1
+      index -= 1
     end
     # and finally reset the logs after one round of learning (so after each game)
     reset_logs

@@ -103,19 +103,19 @@ class NNPlayerTest < ActiveSupport::TestCase
   end
 
   test "should learn from a number of games against the random player when going second" do
+    skip
     puts 'Random : NN'
     player_one = NNPlayer.new
     player_two = RandomPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
-    50000.times do
+    10000.times do
       player_one.moves = []
       player_two.moves = []
       game = Game.new player_two, player_one
       log, outcome = game.play
       stats[outcome] += 1
-      # use players own log to train the table
+      # use players own log to train
       player_one.update_neural_network(outcome)
-      # game.board.draw
     end
     puts "Training stats #{stats}"
     # should be very likely to win the next games
@@ -129,25 +129,14 @@ class NNPlayerTest < ActiveSupport::TestCase
     end
     #assert_operator 10, :>, stats[-1.0]
     puts "Testing stats #{stats}"
+    #puts [player_one.q_values_log.inspect]
   end
 
   test "should learn from a number of games against the min max player when going first" do
     skip
-    # so this gets to about 20% draws after 10k games and does not improve thereafter (tried up to 500k games)
+    # so this gets to about 200% draws after 10k games
     player_one = NNPlayer.new
     player_two = MinMaxPlayer.new
-    # Untrained stats
-    stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
-    100.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_one, player_two
-      log, outcome = game.play
-      stats[outcome] += 1
-    end
-    player_one.reset_logs
-    #assert_operator 10, :>, stats[-1.0]
-    puts "Untrained stats #{stats}"
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     10000.times do
       player_one.moves = []
@@ -157,7 +146,6 @@ class NNPlayerTest < ActiveSupport::TestCase
       stats[outcome] += 1
       # use players own log to train the table
       player_one.update_neural_network(outcome)
-      # game.board.draw
     end
     puts "Training stats #{stats}"
     # should be very likely to win the next games
@@ -169,7 +157,36 @@ class NNPlayerTest < ActiveSupport::TestCase
       log, outcome = game.play
       stats[outcome] += 1
     end
-    #assert_operator 10, :>, stats[-1.0]
+    assert_equal 100, stats[0.0]
+    puts "Testing stats #{stats}"
+  end
+
+  test "should learn from a number of games against the min max player when going second" do
+    #skip
+    # best we can hope for is that NN learns how to get to a draw
+    player_one = NNPlayer.new
+    player_two = MinMaxPlayer.new
+    stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
+    1000000.times do
+      player_one.moves = []
+      player_two.moves = []
+      game = Game.new player_two, player_one
+      log, outcome = game.play
+      stats[outcome] += 1
+      # use players own log to train the table
+      player_one.update_neural_network(outcome)
+    end
+    puts "Training stats #{stats}"
+    # should be very likely to win the next games
+    stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
+    100.times do
+      player_one.moves = []
+      player_two.moves = []
+      game = Game.new player_two, player_one
+      log, outcome = game.play
+      stats[outcome] += 1
+    end
+    #assert_equal 100, stats[0.0]
     puts "Testing stats #{stats}"
   end
 

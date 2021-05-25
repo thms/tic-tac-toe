@@ -42,7 +42,6 @@ class TQPlayerTest < ActiveSupport::TestCase
   end
 
   test "should update q_table after one game" do
-    skip
     player = TQPlayer.new
     player.value = 1.0
     log = []
@@ -64,8 +63,9 @@ class TQPlayerTest < ActiveSupport::TestCase
     log << [board.hash_value, board.state, -1.0, 7]
     board.state = [1.0,-1.0,1.0,-1.0,1.0,-1.0,1.0,-1.0,0]
     log << [board.hash_value, board.state, 1.0, 8]
-    player.update_q_table(log, 1.0)
-    assert_in_delta 0.96, player.q_table[board.hash_value][8], 0.01
+    player.log = log
+    player.update_q_table(1.0)
+    assert_in_delta 1.0, player.q_table[board.hash_value][8], 0.01
   end
 
   test "should learn from a number of games against the random player when going first" do
@@ -81,8 +81,7 @@ class TQPlayerTest < ActiveSupport::TestCase
       log, outcome = game.play
       stats[outcome] += 1
       # use players own log to train the table
-      player_one.update_q_table(player_one.log, (outcome + 1.0)/2.0)
-      # game.board.draw
+      player_one.update_q_table(outcome)
     end
     puts "Training stats #{stats}"
     # should be very likely to win the next games
@@ -112,7 +111,7 @@ class TQPlayerTest < ActiveSupport::TestCase
       log, outcome = game.play
       stats[outcome] += 1
       # use players own log to train the table
-      player_one.update_q_table(player_one.log, ( 1.0 - outcome)/2.0)
+      player_one.update_q_table(outcome)
       #game.board.draw
     end
     puts "Training stats #{stats}"
@@ -153,7 +152,7 @@ class TQPlayerTest < ActiveSupport::TestCase
       log, outcome = game.play
       stats[outcome] += 1
       # use players own log to train the table
-      player_one.update_q_table(player_one.log, (outcome + 1.0)/2.0)
+      player_one.update_q_table(outcome)
       # game.board.draw
     end
     puts "Training stats #{stats}"
@@ -179,7 +178,7 @@ class TQPlayerTest < ActiveSupport::TestCase
     # the TQ actually gets to win and get more draws
     # if the error rate gets to ten percent - so the minMax player make a mistake in every game, the TQ player crushes him
     player_one = TQPlayer.new
-    player_two = MinMaxPlayer.new(false, 0.1)
+    player_two = MinMaxPlayer.new(false, 0.0)
 
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     100.times do
@@ -200,12 +199,12 @@ class TQPlayerTest < ActiveSupport::TestCase
       log, outcome = game.play
       stats[outcome] += 1
       # use players own log to train the table
-      player_one.update_q_table(player_one.log, (1.0 - outcome)/2.0)
+      player_one.update_q_table(outcome)
       # game.board.draw
     end
     puts "Training stats #{stats}"
 
-    # cannot win, but should get quite a few draws
+    # cannot win, but should get quite a few draws (but since we introduced an error rate in the minmax this guy also wins)
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     10000.times do
       player_one.moves = []
@@ -220,7 +219,7 @@ class TQPlayerTest < ActiveSupport::TestCase
   end
 
   test "should learn from a number of games against the min max player when going first / second alternating" do
-    skip
+    #skip
     # the best we can hope for is that TQ gets a fair number of draws
     player_one = TQPlayer.new
     player_two = MinMaxPlayer.new
@@ -232,7 +231,7 @@ class TQPlayerTest < ActiveSupport::TestCase
       log, outcome = game.play
       stats[outcome] += 1
       # use players own log to train the table
-      player_one.update_q_table(player_one.log, (outcome + 1.0)/2.0)
+      player_one.update_q_table(outcome)
       # game.board.draw
     end
     10000.times do
@@ -242,7 +241,7 @@ class TQPlayerTest < ActiveSupport::TestCase
       log, outcome = game.play
       stats[outcome] += 1
       # use players own log to train the table
-      player_one.update_q_table(player_one.log, (1.0 - outcome)/2.0)
+      player_one.update_q_table(outcome)
       # game.board.draw
     end
     puts "Training stats #{stats}"
@@ -269,9 +268,11 @@ class TQPlayerTest < ActiveSupport::TestCase
     #assert_in_delta stats[0.0], stats[-1.0], 10
     puts "Testing stats TQ second #{stats}"
     # after 100 training games: about 50/50, does not seem to improve even after 10k games of training
+    # with initialziation of 0.3, the TQ player becomes as good as the mina max player and every game ends in a draw!!
   end
 
   test "should learn from a number of games against the tq player when going first" do
+    skip
     # we'll need to train both players during the training phase
     # when we train them symmetrically, and initialize the q_tables with 0.3 they learn how to play perfectly well against each other and produce only draws
     # when training symmetrically with initialization of 0.6, whichever player starts the game wins most of the time, the second player never wins and we have 5% - 10% draws
@@ -296,8 +297,8 @@ class TQPlayerTest < ActiveSupport::TestCase
       log, outcome = game.play
       stats[outcome] += 1
       # use players own log to train the table
-      player_one.update_q_table(player_one.log, (outcome + 1.0)/2.0)
-      player_two.update_q_table(player_two.log, (1.0 - outcome)/2.0)
+      player_one.update_q_table(outcome)
+      player_two.update_q_table(outcome)
       # game.board.draw
     end
     puts "Training stats #{stats}"
@@ -309,8 +310,8 @@ class TQPlayerTest < ActiveSupport::TestCase
       log, outcome = game.play
       stats[outcome] += 1
       # use players own log to train the table
-      player_one.update_q_table(player_one.log, (1.0 - outcome)/2.0)
-      player_two.update_q_table(player_two.log, (1.0 + outcome)/2.0)
+      player_one.update_q_table(outcome)
+      player_two.update_q_table(outcome)
       # game.board.draw
     end
     puts "Training stats #{stats}"

@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 ruby '2.7.0'
 
 
-gem 'ruby-fann'
+gem 'ruby-fann', :git => 'https://github.com/thms/ruby-fann.git'
 
 group :development do
   gem 'activesupport'
