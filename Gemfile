@@ -3,6 +3,7 @@ ruby '2.7.0'
 
 
 gem 'ruby-fann', :git => 'https://github.com/thms/ruby-fann.git'
+gem 'graphviz'
 
 group :development do
   gem 'activesupport'

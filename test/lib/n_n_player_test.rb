@@ -73,7 +73,8 @@ class NNPlayerTest < ActiveSupport::TestCase
   end
 
   test "should learn from a number of games against the random player when going first" do
-    skip
+    # this gets to about 95% wins
+  skip
     puts 'NN : Random'
     player_one = NNPlayer.new
     player_two = RandomPlayer.new
@@ -103,12 +104,13 @@ class NNPlayerTest < ActiveSupport::TestCase
   end
 
   test "should learn from a number of games against the random player when going second" do
+    # this gets to about 80% wins
     skip
     puts 'Random : NN'
     player_one = NNPlayer.new
     player_two = RandomPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
-    10000.times do
+    100000.times do
       player_one.moves = []
       player_two.moves = []
       game = Game.new player_two, player_one
@@ -134,7 +136,7 @@ class NNPlayerTest < ActiveSupport::TestCase
 
   test "should learn from a number of games against the min max player when going first" do
     skip
-    # so this gets to about 200% draws after 10k games
+    # so this gets to about 100% draws after 10k games
     player_one = NNPlayer.new
     player_two = MinMaxPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
@@ -162,12 +164,13 @@ class NNPlayerTest < ActiveSupport::TestCase
   end
 
   test "should learn from a number of games against the min max player when going second" do
-    #skip
-    # best we can hope for is that NN learns how to get to a draw (and he does after about 1 million games)
+    skip
+    # best we can hope for is that NN learns how to get to a draw
+    # after about 1 million training games, which takes about 3 minutes to train, he gets to 100% draws
     player_one = NNPlayer.new
     player_two = MinMaxPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
-    1000000.times do
+    10000.times do
       player_one.moves = []
       player_two.moves = []
       game = Game.new player_two, player_one

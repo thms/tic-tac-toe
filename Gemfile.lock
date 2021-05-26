@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/thms/ruby-fann.git
-  revision: f5aabac28b00e5b1f65e30ed9a348b0efc14bc01
+  revision: 0ef939f26b3751f21a52ed8031a4c1c135facbbd
   specs:
-    ruby-fann (1.3.0)
+    ruby-fann (1.3.3)
 
 GEM
   remote: https://rubygems.org/
@@ -16,8 +16,10 @@ GEM
     byebug (11.1.3)
     coderay (1.1.3)
     concurrent-ruby (1.1.8)
-    ffi (1.15.0)
+    ffi (1.15.1)
     formatador (0.2.5)
+    graphviz (1.2.1)
+      process-pipeline
     guard (2.17.0)
       formatador (>= 0.2.4)
       listen (>= 2.7, < 4.0)
@@ -43,6 +45,12 @@ GEM
     notiffany (0.1.3)
       nenv (~> 0.1)
       shellany (~> 0.0)
+    process-group (1.2.3)
+      process-terminal (~> 0.2.0)
+    process-pipeline (1.0.2)
+      process-group
+    process-terminal (0.2.0)
+      ffi
     pry (0.14.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -61,6 +69,7 @@ PLATFORMS
 DEPENDENCIES
   activesupport
   byebug
+  graphviz
   guard
   guard-minitest (~> 2.4, >= 2.4.6)
   ruby-fann!

@@ -20,6 +20,9 @@ Depending on initialisation of the Q table,  player can learn get to perfect dra
 ## NNPlayer
 A fairly simple neural network with one hidden layer that can learn while playing from the other players or against itself. With the right amount of training it will get to all draws against min max and TQ
 
+## NN2Player
+An attempt to use a different network topology with shortcut connections, while this learns well going first, it also does not get much better than 80% wins going second
+
 ## Using the code base
 This is exploratory code only, not of production quality or with a hint of anything final.
 To run the tests, make sure you have ruby, and bundler installed.
