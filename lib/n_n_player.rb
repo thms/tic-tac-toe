@@ -104,11 +104,11 @@ class NNPlayer
     # append the logs to the experience replay log and shift out if size is reached.
     @games_played += 1
     @experience_replay_log << {next_q_max: @next_q_max_log, state: @state_log, q_values: @q_values_log, actions: @action_log}
-    @experience_replay_log.shift if @experience_replay_log.size > 2000
+    @experience_replay_log.shift if @experience_replay_log.size > 100
     # reset the logs after one round of learning (so after each game)
     reset_logs
-    experience_replay if @games_played.modulo(1000) == 0 && @use_experience_replay
-    update_target_network if @games_played.modulo(1) == 0 && @use_target_network
+    experience_replay if @games_played.modulo(100) == 0 && @use_experience_replay
+    update_target_network if @games_played.modulo(100) == 0 && @use_target_network
   end
 
   # uses the state and action log to recalcuate next_q_max from the target network
@@ -133,7 +133,7 @@ class NNPlayer
 
   # update training based on a random sample of experiences
   def experience_replay
-    @experience_replay_log.sample(500).each do |entry|
+    @experience_replay_log.sample(100).each do |entry|
       @action_log = entry[:actions]
       @next_q_max_log = entry[:next_q_max]
       @state_log = entry[:state]

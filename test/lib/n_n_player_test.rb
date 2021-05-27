@@ -84,7 +84,7 @@ class NNPlayerTest < ActiveSupport::TestCase
     player_one = NNPlayer.new
     player_two = RandomPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
-    1000.times do
+    10000.times do
       player_one.moves = []
       player_two.moves = []
       game = Game.new player_one, player_two
