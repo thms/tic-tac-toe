@@ -34,8 +34,7 @@ class NN2Player
     @fann = RubyFann::Shortcut.new(:num_inputs=>9, :hidden_neurons=>[8], :num_outputs=>9)
     @fann.set_learning_rate(0.1) # default value is 0.7
     @fann.set_training_algorithm(:incremental)
-    @fann.set_activation_function_layer(:linear, 1)
-    #@fann.set_activation_function_layer(:relu, 2)
+    @fann.set_activation_function_hidden(:linear)
   end
 
   def reset_logs

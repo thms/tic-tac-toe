@@ -20,7 +20,10 @@ class NNPlayer
   attr_accessor :state_log # stores the board state
   attr_accessor :q_values_log # stores the q values as calucated by the NN before the move is made
   attr_accessor :next_q_max_log # stores the max Q of the next state, and the final reward
-  attr_accessor :log
+  attr_accessor :use_experience_replay
+  attr_accessor :experience_replay_log
+  attr_accessor :games_played
+  attr_accessor :temperature # temparature for softmax
 
   def initialize(random = false)
     @value = nil
@@ -30,7 +33,10 @@ class NNPlayer
     @state_log = []
     @q_values_log = []
     @next_q_max_log = []
-    @log = []
+    @use_experience_replay = true
+    @experience_replay_log = []
+    @games_played = 0
+    @temperature = 1.0
     @random = random
     @fann = RubyFann::Standard.new(:num_inputs=>27, :hidden_neurons=>[243], :num_outputs=>9)
     @fann.set_learning_rate(0.1) # default value is 0.7
@@ -53,14 +59,14 @@ class NNPlayer
     state = board_to_nn_inputs(board.state)
     # run the network and pass the qvalues through softmax
     q_values = @fann.run(state)
-    probabilities = softmax(q_values, 1)
-    # reject all moves that are not possible according to the board by setting their value to nil
-    probabilities.map!.with_index {|v, i| possible_moves.include?(i) ? v : -100}
+    probabilities = softmax(q_values)
+    # reject all moves that are not possible according to the board by setting their probability to 0
+    probabilities.map!.with_index {|v, i| possible_moves.include?(i) ? v : 0}
     # pick move with highest value that is possible from the moves that are possible
-    highest_value = probabilities.max
+    max_probability = probabilities.max
     # find all moves that have the highest value, and pick one of them
-    # TODO: turn into using probability band
-    move = probabilities.map.with_index {|v, i| highest_value == v ? i : nil}.compact.sample
+    # turn into using probability band
+    move = probabilities.map.with_index {|v, i| max_probability <= 1.01 * v ? i : nil}.compact.sample
 
     # Log data for training at the end of the game
     @next_q_max_log << q_values[move] unless @action_log.empty?
@@ -76,20 +82,43 @@ class NNPlayer
   def update_neural_network(outcome)
     # push the final reward onto the nextmax log from the point of view of the player
     @next_q_max_log << (@value * outcome + 1.0)/2.0
-    @log << @next_q_max_log
-    @log << ['--']
-    index = @moves.size - 1
+    index = @action_log.size - 1
     while index >= 0
       inputs = board_to_nn_inputs(@state_log[index])
       outputs = @q_values_log[index]
       # replace the q value of the move made with the discounted observation
-      outputs[@moves[index]] = DISCOUNT * @next_q_max_log[index]
+      outputs[@action_log[index]] = DISCOUNT * @next_q_max_log[index]
       # do one training step
       @fann.train(inputs, outputs)
       index -= 1
     end
+    # append the logs to the experience replay log and shift out if size is reached.
+    @games_played += 1
+    @experience_replay_log << {next_q_max: @next_q_max_log, state: @state_log, q_values: @q_values_log, actions: @action_log}
+    @experience_replay_log.shift if @experience_replay_log.size > 2000
     # and finally reset the logs after one round of learning (so after each game)
     reset_logs
+    experience_replay if @games_played.modulo(1000) == 0 && @use_experience_replay
+  end
+
+  # update training based on a random sample of experiences
+  def experience_replay
+    @experience_replay_log.sample(500).each do |entry|
+      @action_log = entry[:actions]
+      @next_q_max_log = entry[:next_q_max]
+      @state_log = entry[:state]
+      @q_values_log = entry[:q_values]
+      index = @action_log.size - 1
+      while index >= 0
+        inputs = board_to_nn_inputs(@state_log[index])
+        outputs = @q_values_log[index]
+        # replace the q value of the move made with the discounted observation
+        outputs[@action_log[index]] = DISCOUNT * @next_q_max_log[index]
+        # do one training step
+        @fann.train(inputs, outputs)
+        index -= 1
+      end
+    end
   end
 
   # translate compact board state to 3*9
@@ -105,8 +134,8 @@ class NNPlayer
   # probability of the highet value approaches 1
   # https://en.wikipedia.org/wiki/Softmax_function
   # Use higher temperature steer how exploratory the player will be by picking from a set of possible actions within a band of probability
-  def softmax(values, temperature = 1)
-    denominator = values.collect {|v| Math.exp(v / temperature)}.reduce(:+)
-    values.collect {|v| Math.exp(v/temperature) / denominator}
+  def softmax(values)
+    denominator = values.collect {|v| Math.exp(v / @temperature)}.reduce(:+)
+    values.collect {|v| Math.exp(v / @temperature) / denominator}
   end
 end

@@ -12,9 +12,11 @@ class Game
     @player_one = player_one
     @player_one.stone = 'x'
     @player_one.value = 1.0
+    @player_one.moves = []
     @player_two = player_two
     @player_two.stone = 'o'
     @player_two.value = -1.0
+    @player_two.moves = []
     @current_player = @player_one
     @winner = nil
     @display_output = params[:display_output]

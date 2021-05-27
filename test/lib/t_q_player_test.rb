@@ -75,22 +75,15 @@ class TQPlayerTest < ActiveSupport::TestCase
     player_two = RandomPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     1000.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_one, player_two
-      log, outcome = game.play
+      log, outcome = Game.new(player_one, player_two).play
       stats[outcome] += 1
-      # use players own log to train the table
       player_one.update_q_table(outcome)
     end
     puts "Training stats #{stats}"
     # should be very likely to win the next games
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     100.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_one, player_two
-      log, outcome = game.play
+      log, outcome = Game.new(player_one, player_two).play
       stats[outcome] += 1
     end
     assert_operator 15, :>, stats[-1.0]
@@ -105,24 +98,16 @@ class TQPlayerTest < ActiveSupport::TestCase
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     # seems going second it needs more training to get good at the game
     10000.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_two, player_one
-      log, outcome = game.play
+      log, outcome = Game.new(player_two, player_one).play
       stats[outcome] += 1
-      # use players own log to train the table
       player_one.update_q_table(outcome)
-      #game.board.draw
     end
     puts "Training stats #{stats}"
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     100.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_two, player_one
-      log, outcome = game.play
+      log, outcome = Game.new(player_two, player_one).play
       stats[outcome] += 1
-    end
+      end
     assert_operator 15, :>, stats[1.0]
     puts "Testing stats #{stats}"
   end
@@ -135,10 +120,7 @@ class TQPlayerTest < ActiveSupport::TestCase
 
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     100.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_one, player_two
-      log, outcome = game.play
+      log, outcome = Game.new(player_one, player_two).play
       stats[outcome] += 1
     end
     puts "Untrained stats #{stats}"
@@ -146,24 +128,16 @@ class TQPlayerTest < ActiveSupport::TestCase
 
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     1000.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_one, player_two
-      log, outcome = game.play
+      log, outcome = Game.new(player_one, player_two).play
       stats[outcome] += 1
-      # use players own log to train the table
       player_one.update_q_table(outcome)
-      # game.board.draw
     end
     puts "Training stats #{stats}"
 
     # cannot win, but should get quite a few draws
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     1000.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_one, player_two
-      log, outcome = game.play
+      log, outcome = Game.new(player_one, player_two).play
       stats[outcome] += 1
     end
     #assert_in_delta stats[0.0], stats[-1.0], 10
@@ -182,10 +156,7 @@ class TQPlayerTest < ActiveSupport::TestCase
 
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     100.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_two, player_one
-      log, outcome = game.play
+      log, outcome = Game.new(player_two, player_one).play
       stats[outcome] += 1
     end
     puts "Untrained stats #{stats}"
@@ -193,24 +164,16 @@ class TQPlayerTest < ActiveSupport::TestCase
 
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     100000.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_two, player_one
-      log, outcome = game.play
+      log, outcome = Game.new(player_two, player_one).play
       stats[outcome] += 1
-      # use players own log to train the table
       player_one.update_q_table(outcome)
-      # game.board.draw
     end
     puts "Training stats #{stats}"
 
     # cannot win, but should get quite a few draws (but since we introduced an error rate in the minmax this guy also wins)
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     10000.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_two, player_one
-      log, outcome = game.play
+      log, outcome = Game.new(player_two, player_one).play
       stats[outcome] += 1
     end
     #assert_in_delta stats[0.0], stats[-1.0], 10
@@ -219,50 +182,34 @@ class TQPlayerTest < ActiveSupport::TestCase
   end
 
   test "should learn from a number of games against the min max player when going first / second alternating" do
-    #skip
+    skip
     # the best we can hope for is that TQ gets a fair number of draws
     player_one = TQPlayer.new
     player_two = MinMaxPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     10000.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_one, player_two
-      log, outcome = game.play
+      log, outcome = Game.new(player_one, player_two).play
       stats[outcome] += 1
-      # use players own log to train the table
       player_one.update_q_table(outcome)
-      # game.board.draw
     end
     10000.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_two, player_one
-      log, outcome = game.play
+      log, outcome = Game.new(player_two, player_one).play
       stats[outcome] += 1
-      # use players own log to train the table
       player_one.update_q_table(outcome)
-      # game.board.draw
     end
     puts "Training stats #{stats}"
 
     # cannot win, but should get quite a few draws
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     1000.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_one, player_two
-      log, outcome = game.play
+      log, outcome = Game.new(player_one, player_two).play
       stats[outcome] += 1
     end
     #assert_in_delta stats[0.0], stats[-1.0], 10
     puts "Testing stats TQ first #{stats}"
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     1000.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_two, player_one
-      log, outcome = game.play
+      log, outcome = Game.new(player_two, player_one).play
       stats[outcome] += 1
     end
     #assert_in_delta stats[0.0], stats[-1.0], 10
@@ -272,7 +219,7 @@ class TQPlayerTest < ActiveSupport::TestCase
   end
 
   test "should learn from a number of games against the tq player when going first" do
-    skip
+    #skip
     # we'll need to train both players during the training phase
     # when we train them symmetrically, and initialize the q_tables with 0.3 they learn how to play perfectly well against each other and produce only draws
     # when training symmetrically with initialization of 0.6, whichever player starts the game wins most of the time, the second player never wins and we have 5% - 10% draws
@@ -281,48 +228,32 @@ class TQPlayerTest < ActiveSupport::TestCase
 
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     1000.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_one, player_two
-      log, outcome = game.play
+      log, outcome = Game.new(player_one, player_two).play
       stats[outcome] += 1
     end
     puts "Untrained stats #{stats}"
 
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     10000.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_one, player_two
-      log, outcome = game.play
+      log, outcome = Game.new(player_one, player_two).play
       stats[outcome] += 1
-      # use players own log to train the table
       player_one.update_q_table(outcome)
       player_two.update_q_table(outcome)
-      # game.board.draw
     end
     puts "Training stats #{stats}"
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     10000.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_two, player_one
-      log, outcome = game.play
+      log, outcome = Game.new(player_two, player_one).play
       stats[outcome] += 1
-      # use players own log to train the table
       player_one.update_q_table(outcome)
       player_two.update_q_table(outcome)
-      # game.board.draw
     end
     puts "Training stats #{stats}"
 
     # cannot win, but should get quite a few draws
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     1000.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_two, player_one
-      log, outcome = game.play
+      log, outcome = Game.new(player_two, player_one).play
       stats[outcome] += 1
     end
     #assert_in_delta stats[0.0], stats[-1.0], 10
@@ -330,10 +261,7 @@ class TQPlayerTest < ActiveSupport::TestCase
     # cannot win, but should get quite a few draws
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     1000.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_one, player_two
-      log, outcome = game.play
+      log, outcome = Game.new(player_one, player_two).play
       stats[outcome] += 1
     end
     #assert_in_delta stats[0.0], stats[-1.0], 10

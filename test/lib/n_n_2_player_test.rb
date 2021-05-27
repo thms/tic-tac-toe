@@ -20,63 +20,43 @@ class NN2PlayerTest < ActiveSupport::TestCase
   test "should learn from a number of games against the random player when going first" do
     # this gets to about 95% wins
     skip
-    puts 'NN2 : Random'
     player_one = NN2Player.new
     player_two = RandomPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     10000.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_one, player_two
-      log, outcome = game.play
+      log, outcome = Game.new(player_one, player_two).play
       stats[outcome] += 1
-      # use players own log to train the table
       player_one.update_neural_network(outcome)
-      # game.board.draw
     end
-    RubyFann::Neurotica.new.graph(player_one.fann, './../../network.png')
-    puts "Training stats #{stats}"
+    puts "Training stats NN2:Random #{stats}"
     # should be very likely to win the next games
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     100.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_one, player_two
-      log, outcome = game.play
+      log, outcome = Game.new(player_one, player_two).play
       stats[outcome] += 1
     end
-    puts "Testing stats #{stats}"
+    puts "Testing stats NN2:Random #{stats}"
   end
 
   test "should learn from a number of games against the random player when going second" do
     # this does not seem to learn well at all
-    #skip
-    puts 'NN2 : Random'
+    skip
     player_one = NN2Player.new
     player_two = RandomPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     10000.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_two, player_one
-      log, outcome = game.play
+      log, outcome = Game.new(player_two, player_one).play
       stats[outcome] += 1
-      # use players own log to train the table
       player_one.update_neural_network(outcome)
-      # game.board.draw
     end
-    puts "Training stats #{stats}"
-    #RubyFann::Neurotica.new.graph(player_one.fann, './../../network.png')
+    puts "Training stats Random:NN2 #{stats}"
     # should be very likely to win the next games
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     100.times do
-      player_one.moves = []
-      player_two.moves = []
-      game = Game.new player_two, player_one
-      log, outcome = game.play
+      log, outcome = Game.new(player_two, player_one).play
       stats[outcome] += 1
     end
-    puts "Testing stats #{stats}"
+    puts "Testing stats Random:NN2 #{stats}"
   end
 
 end
