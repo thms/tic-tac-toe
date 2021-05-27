@@ -107,12 +107,11 @@ class NNPlayerTest < ActiveSupport::TestCase
 
   test "should learn from a number of games against the random player when going second" do
     # this gets to about 80% wins with and without experience replay ...
-    skip
+    #skip
     puts 'Random : NN'
     player_one = NNPlayer.new
     player_two = RandomPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
-    player_one.epsilon = 1.1
     10000.times do
       player_one.moves = []
       player_two.moves = []
@@ -125,7 +124,6 @@ class NNPlayerTest < ActiveSupport::TestCase
     puts "Training stats #{stats}"
     # should be very likely to win the next games
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
-    player_one.epsilon = 1.0
     100.times do
       player_one.moves = []
       player_two.moves = []

@@ -69,7 +69,7 @@ class TQPlayerTest < ActiveSupport::TestCase
   end
 
   test "should learn from a number of games against the random player when going first" do
-    skip
+    #skip
     puts 'TQ : Random'
     player_one = TQPlayer.new
     player_two = RandomPlayer.new
@@ -219,7 +219,7 @@ class TQPlayerTest < ActiveSupport::TestCase
   end
 
   test "should learn from a number of games against the tq player when going first" do
-    #skip
+    skip
     # we'll need to train both players during the training phase
     # when we train them symmetrically, and initialize the q_tables with 0.3 they learn how to play perfectly well against each other and produce only draws
     # when training symmetrically with initialization of 0.6, whichever player starts the game wins most of the time, the second player never wins and we have 5% - 10% draws

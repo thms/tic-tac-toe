@@ -1,6 +1,8 @@
 require 'test_helper'
 require_relative './../../lib/min_max_player'
+require_relative './../../lib/random_player'
 require_relative './../../lib/board'
+require_relative './../../lib/game'
 
 class MinMaxPlayerTest < ActiveSupport::TestCase
 
@@ -67,5 +69,30 @@ class MinMaxPlayerTest < ActiveSupport::TestCase
     result = player.one_round(board, player.value)
     assert_equal({7 => 0}, result)
   end
+
+  test "should win against the random player when going first" do
+    #skip
+    player_one = MinMaxPlayer.new
+    player_two = RandomPlayer.new
+    stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
+    1000.times do
+      log, outcome = Game.new(player_one, player_two).play
+      stats[outcome] += 1
+    end
+    puts "Testing stats MinMax:Random #{stats}"
+  end
+
+  test "should win against the random player when going second" do
+    #skip
+    player_one = MinMaxPlayer.new
+    player_two = RandomPlayer.new
+    stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
+    1000.times do
+      log, outcome = Game.new(player_two, player_one).play
+      stats[outcome] += 1
+    end
+    puts "Testing stats Random:MinMax #{stats}"
+  end
+
 
 end
