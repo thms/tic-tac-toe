@@ -6,6 +6,11 @@
 # as 9 inputs for crosses, 9 for naughts, and nine for empty pieces - we'll try both ways.
 # and 9 outputs, one for each move
 # for the Q values we calculate the updates
+
+# Observations
+# experience replay does not make a difference on its own
+# separate target network does not make a difference on its own - so stability does not seem to be an issue during learning
+
 require 'ruby-fann'
 
 class NNPlayer
@@ -24,6 +29,7 @@ class NNPlayer
   attr_accessor :experience_replay_log
   attr_accessor :games_played
   attr_accessor :temperature # temparature for softmax
+  attr_accessor :use_separate_target_network
 
   def initialize(random = false)
     @value = nil
@@ -38,10 +44,12 @@ class NNPlayer
     @games_played = 0
     @temperature = 1.0
     @random = random
+    @use_target_network = false
     @fann = RubyFann::Standard.new(:num_inputs=>27, :hidden_neurons=>[243], :num_outputs=>9)
     @fann.set_learning_rate(0.1) # default value is 0.7
     @fann.set_training_algorithm(:incremental)
     @fann.set_activation_function_hidden(:relu)
+    update_target_network if @use_target_network
   end
 
   def reset_logs
@@ -81,6 +89,7 @@ class NNPlayer
   # run one iteration of the training
   def update_neural_network(outcome)
     # push the final reward onto the nextmax log from the point of view of the player
+    recalc_next_q_max_log if @use_target_network
     @next_q_max_log << (@value * outcome + 1.0)/2.0
     index = @action_log.size - 1
     while index >= 0
@@ -96,10 +105,31 @@ class NNPlayer
     @games_played += 1
     @experience_replay_log << {next_q_max: @next_q_max_log, state: @state_log, q_values: @q_values_log, actions: @action_log}
     @experience_replay_log.shift if @experience_replay_log.size > 2000
-    # and finally reset the logs after one round of learning (so after each game)
+    # reset the logs after one round of learning (so after each game)
     reset_logs
     experience_replay if @games_played.modulo(1000) == 0 && @use_experience_replay
+    update_target_network if @games_played.modulo(1) == 0 && @use_target_network
   end
+
+  # uses the state and action log to recalcuate next_q_max from the target network
+  def recalc_next_q_max_log
+    @next_q_max_log = []
+    index = 0
+    while index < @action_log.size
+      q_values = @target_network.run(@state_log[index])
+      @next_q_max_log << q_values[action_log[index]] unless index == 0
+    index +=1
+    end
+  end
+
+  def update_target_network
+    # this is - as expected - very slow, unfortunately the library does not expose methods to
+    # copy the config from one network to another.
+    @filename = "./tmp/#{rand(1000)}.net" if @filename.nil?
+    @fann.save(@filename)
+    @target_network = RubyFann::Standard.new(filename: @filename)
+  end
+
 
   # update training based on a random sample of experiences
   def experience_replay

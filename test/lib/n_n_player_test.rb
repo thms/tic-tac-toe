@@ -6,6 +6,9 @@ require_relative './../../lib/n_n_player'
 require_relative './../../lib/board'
 require_relative './../../lib/game'
 
+# Clean up temp files before running
+`rm -f ./tmp/*`
+
 class NNPlayerTest < ActiveSupport::TestCase
 
   test "softmax should be 1 and all zeros for an array where only one value is set at low temperature" do
@@ -76,12 +79,12 @@ class NNPlayerTest < ActiveSupport::TestCase
 
   test "should learn from a number of games against the random player when going first" do
     # this gets to about 95% wins
-    skip
+    #skip
     puts 'NN : Random'
     player_one = NNPlayer.new
     player_two = RandomPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
-    10000.times do
+    1000.times do
       player_one.moves = []
       player_two.moves = []
       game = Game.new player_one, player_two
@@ -101,13 +104,12 @@ class NNPlayerTest < ActiveSupport::TestCase
       log, outcome = game.play
       stats[outcome] += 1
     end
-    #assert_operator 10, :>, stats[-1.0]
     puts "Testing stats #{stats}"
   end
 
   test "should learn from a number of games against the random player when going second" do
     # this gets to about 80% wins with and without experience replay ...
-    #skip
+    skip
     puts 'Random : NN'
     player_one = NNPlayer.new
     player_two = RandomPlayer.new
