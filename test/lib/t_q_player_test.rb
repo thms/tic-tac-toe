@@ -69,7 +69,7 @@ class TQPlayerTest < ActiveSupport::TestCase
   end
 
   test "should learn from a number of games against the random player when going first" do
-    #skip
+    skip
     puts 'TQ : Random'
     player_one = TQPlayer.new
     player_two = RandomPlayer.new
@@ -147,7 +147,7 @@ class TQPlayerTest < ActiveSupport::TestCase
 
   test "should learn from a number of games against the min max player when going second" do
     skip
-    # the best we can hope for is that TQ gets a fair number of draws - getting to about 6%
+    # talso gets to 100% draws
     # only if we introduce an error rate in the MinMax player, does this change and
     # the TQ actually gets to win and get more draws
     # if the error rate gets to ten percent - so the minMax player make a mistake in every game, the TQ player crushes him
@@ -163,7 +163,7 @@ class TQPlayerTest < ActiveSupport::TestCase
     # Typically 25 draws to 75 losses
 
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
-    100000.times do
+    1000.times do
       log, outcome = Game.new(player_two, player_one).play
       stats[outcome] += 1
       player_one.update_q_table(outcome)
@@ -187,12 +187,12 @@ class TQPlayerTest < ActiveSupport::TestCase
     player_one = TQPlayer.new
     player_two = MinMaxPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
-    10000.times do
+    1000.times do
       log, outcome = Game.new(player_one, player_two).play
       stats[outcome] += 1
       player_one.update_q_table(outcome)
     end
-    10000.times do
+    1000.times do
       log, outcome = Game.new(player_two, player_one).play
       stats[outcome] += 1
       player_one.update_q_table(outcome)
@@ -234,7 +234,7 @@ class TQPlayerTest < ActiveSupport::TestCase
     puts "Untrained stats #{stats}"
 
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
-    10000.times do
+    1000.times do
       log, outcome = Game.new(player_one, player_two).play
       stats[outcome] += 1
       player_one.update_q_table(outcome)
@@ -242,7 +242,7 @@ class TQPlayerTest < ActiveSupport::TestCase
     end
     puts "Training stats #{stats}"
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
-    10000.times do
+    1000.times do
       log, outcome = Game.new(player_two, player_one).play
       stats[outcome] += 1
       player_one.update_q_table(outcome)

@@ -80,6 +80,7 @@ class MinMaxPlayerTest < ActiveSupport::TestCase
       stats[outcome] += 1
     end
     puts "Testing stats MinMax:Random #{stats}"
+    puts player_one.cache_stats
   end
 
   test "should win against the random player when going second" do
@@ -92,6 +93,7 @@ class MinMaxPlayerTest < ActiveSupport::TestCase
       stats[outcome] += 1
     end
     puts "Testing stats Random:MinMax #{stats}"
+    puts player_one.cache_stats
   end
 
 

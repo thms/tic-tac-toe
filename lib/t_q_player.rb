@@ -50,14 +50,16 @@ class TQPlayer
     learning_rate = 0.1
     discount = 0.95
     max_a = (1.0 + @value * outcome)/2.0
+    last_entry = true
     while entry = @log.pop
       hash_value = entry[0]
       action = entry[3]
       # initialise q_table if not yet done
       @q_table[hash_value] = [INITIAL_Q_VALUE] * 9 if @q_table[hash_value].nil?
       # update with discount and learning rate, unless it is the final outcome, then use its value straight up
-      if max_a == outcome
+      if last_entry
         @q_table[hash_value][action] = max_a
+        last_entry = false
       else
         @q_table[hash_value][action] = (1.0 - learning_rate) * @q_table[hash_value][action] + learning_rate * discount * max_a
       end

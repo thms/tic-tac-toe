@@ -7,6 +7,8 @@ class MinMaxPlayer
   attr_accessor :moves
   attr_accessor :stone
   attr_accessor :cache
+  attr_accessor :cache_hits
+  attr_accessor :cache_misses
   attr_accessor :random # if true, player picks randomly from available equally well performing moves
   attr_accessor :error_rate
   WINNING_POSITIONS = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]]
@@ -16,18 +18,23 @@ class MinMaxPlayer
     @stone = nil
     @moves = []
     @cache = {}
+    @cache_hits = 0
+    @cache_misses = 0
     @random = random
-    @error_rate = error_rate / 0.8# how often the player picks a random move, rather than a perfect move.
+    @error_rate = error_rate / 0.8 # how often the player picks a random move, rather than a perfect move.
   end
 
   def select_move(board)
-    # select best possible move
-    move = one_round(board, @value).keys.first
     # occasionally make a mistake and pick a random move
     # average possible moves = (1+2+3+4+5+6+7+8+9)/9 = 5
     # so effective error rate is error_rate * 0.8
     # so to get the the correct error rate divide by 0.8
-    move = board.possible_moves.sample if rand < @error_rate
+    if rand < @error_rate
+      move = board.possible_moves.sample
+    else
+      # select best possible move
+      move = one_round(board, @value).keys.first
+    end
     move
   end
 
@@ -35,7 +42,13 @@ class MinMaxPlayer
   # {4 => 1.0}
   def one_round(board, value)
     cache_key = board.hash_value
-    return @cache[cache_key] if @cache.key? cache_key
+    if @cache.key? cache_key
+      @cache_hits += 1
+      return @cache[cache_key]
+    else
+      @cache_misses += 1
+    end
+
     possible_moves = board.possible_moves
     # puts "#{value}, #{possible_moves}"
     moves = {}
@@ -92,6 +105,10 @@ class MinMaxPlayer
 
   def deep_clone(object)
     Marshal.load(Marshal.dump(object))
+  end
+
+  def cache_stats
+    {size: @cache.length, hits: @cache_hits, misses: @cache_misses}
   end
 
 
