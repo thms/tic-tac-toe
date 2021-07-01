@@ -77,12 +77,12 @@ class NN2Player
     @next_q_max_log << (@value * outcome + 1.0)/2.0
     @log << @next_q_max_log
     @log << ['--']
-    index = @moves.size - 1
+    index = @action_log.size - 1
     while index >= 0
       inputs = board_to_nn_inputs(@state_log[index])
       outputs = @q_values_log[index]
       # replace the q value of the move made with the discounted observation
-      outputs[@moves[index]] = DISCOUNT * @next_q_max_log[index]
+      outputs[@action_log[index]] = DISCOUNT * @next_q_max_log[index]
       # do one training step
       @fann.train(inputs, outputs)
       index -= 1

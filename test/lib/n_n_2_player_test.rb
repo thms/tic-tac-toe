@@ -18,12 +18,12 @@ class NN2PlayerTest < ActiveSupport::TestCase
   end
 
   test "should learn from a number of games against the random player when going first" do
-    # this gets to about 95% wins
+    # this gets to about 98% wins
     skip
     player_one = NN2Player.new
     player_two = RandomPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
-    10000.times do
+    1000.times do
       log, outcome = Game.new(player_one, player_two).play
       stats[outcome] += 1
       player_one.update_neural_network(outcome)
@@ -39,8 +39,8 @@ class NN2PlayerTest < ActiveSupport::TestCase
   end
 
   test "should learn from a number of games against the random player when going second" do
-    # this does not seem to learn well at all
-    skip
+    # this gets to about 75% of wins
+    #skip
     player_one = NN2Player.new
     player_two = RandomPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
