@@ -12,6 +12,7 @@ require_relative './../../lib/game'
 class NNPlayerTest < ActiveSupport::TestCase
 
   test "softmax should be 1 and all zeros for an array where only one value is set at low temperature" do
+    skip
     player = NNPlayer.new
     input = [0.5, 0, 0]
     player.temperature = 0.001
@@ -22,6 +23,7 @@ class NNPlayerTest < ActiveSupport::TestCase
   end
 
   test "softmax should be very similar for an array where only one value is set and high temerature" do
+    skip
     player = NNPlayer.new
     input = [0.5, 0, 0]
     player.temperature = 1000
@@ -32,6 +34,7 @@ class NNPlayerTest < ActiveSupport::TestCase
   end
 
   test "board_to_nn_inputs should map states correctly - all ones" do
+    skip
     player = NNPlayer.new
     state = [1.0] * 9
     result = player.board_to_nn_inputs(state)
@@ -39,6 +42,7 @@ class NNPlayerTest < ActiveSupport::TestCase
   end
 
   test "board_to_nn_inputs should map states correctly - all minus ones" do
+    skip
     player = NNPlayer.new
     state = [- 1.0] * 9
     result = player.board_to_nn_inputs(state)
@@ -46,6 +50,7 @@ class NNPlayerTest < ActiveSupport::TestCase
   end
 
   test "board_to_nn_inputs should map states correctly - mixed" do
+    skip
     player = NNPlayer.new
     state = [- 1.0, 0, 1.0, 0,0,0,0,0,0]
     result = player.board_to_nn_inputs(state)
@@ -53,6 +58,7 @@ class NNPlayerTest < ActiveSupport::TestCase
   end
 
   test "should select random move if no learning yet" do
+    skip
     player = NNPlayer.new
     player.value = 1.0
     board = Board.new [0, 0, 0 ,0, 0,0,0,0,0]
@@ -61,6 +67,7 @@ class NNPlayerTest < ActiveSupport::TestCase
   end
 
   test "should select only available move if no learning yet" do
+    skip
     player = NNPlayer.new
     player.value = 1.0
     board = Board.new [0, 1.0, -1.0 ,1.0, -1.0,1.0,-1.0,1.0, -1.0]
@@ -70,6 +77,7 @@ class NNPlayerTest < ActiveSupport::TestCase
 
 
   test "NNPlayer should adjust network after each game" do
+    skip
     player_one = NNPlayer.new
     player_two = RandomPlayer.new
     game = Game.new player_one, player_two
@@ -79,7 +87,7 @@ class NNPlayerTest < ActiveSupport::TestCase
 
   test "should learn from a number of games against the random player when going first" do
     # this gets to about 95% wins
-    #skip
+    skip
     puts 'NN : Random'
     player_one = NNPlayer.new
     player_two = RandomPlayer.new
@@ -139,7 +147,7 @@ class NNPlayerTest < ActiveSupport::TestCase
   end
 
   test "should learn from a number of games against the min max player when going first" do
-    skip
+    #skip
     # so this gets to about 100% draws after 10k games
     player_one = NNPlayer.new
     player_two = MinMaxPlayer.new
@@ -153,7 +161,7 @@ class NNPlayerTest < ActiveSupport::TestCase
       # use players own log to train the table
       player_one.update_neural_network(outcome)
     end
-    puts "Training stats #{stats}"
+    puts "Training stats NN:MinMax #{stats}"
     # should be very likely to win the next games
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     100.times do
@@ -164,7 +172,7 @@ class NNPlayerTest < ActiveSupport::TestCase
       stats[outcome] += 1
     end
     #assert_equal 100, stats[0.0]
-    puts "Testing stats #{stats}"
+    puts "Testing stats NN:MinMax #{stats}"
   end
 
   test "should learn from a number of games against the min max player when going second" do
@@ -206,7 +214,7 @@ class NNPlayerTest < ActiveSupport::TestCase
     player_three = RandomPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
     player_one.temperature = 1.0
-    50000.times do
+    5000.times do
       log, outcome = Game.new(player_one, player_two).play
       player_one.update_neural_network(outcome)
       stats[outcome] += 1

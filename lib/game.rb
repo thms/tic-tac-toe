@@ -38,9 +38,9 @@ class Game
     return log, outcome
   end
 
-  # use a random strategy to place a stone
+  # use the player's strategy to place a stone
   def make_move(player)
-    # clone the board state, becuase the training data must have the state before the  move and the move.
+    # clone the board state, because the training data must have the state before the  move and the move itself.
     previous_state = @board.state.clone
     position = player.select_move(@board)
     @board.state[position] = player.value

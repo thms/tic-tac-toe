@@ -39,14 +39,14 @@ class NNPlayer
     @state_log = []
     @q_values_log = []
     @next_q_max_log = []
-    @use_experience_replay = true
+    @use_experience_replay = false
     @experience_replay_log = []
     @games_played = 0
     @temperature = 1.0
     @random = random
-    @use_target_network = true
+    @use_target_network = false
     @fann = RubyFann::Standard.new(:num_inputs=>27, :hidden_neurons=>[243], :num_outputs=>9)
-    @fann.set_learning_rate(0.1) # default value is 0.7
+    @fann.set_learning_rate(LEARNING_RATE) # default value is 0.7
     @fann.set_training_algorithm(:incremental)
     @fann.set_activation_function_hidden(:relu)
     update_target_network if @use_target_network

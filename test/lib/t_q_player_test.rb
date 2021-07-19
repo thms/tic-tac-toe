@@ -8,6 +8,7 @@ require_relative './../../lib/game'
 class TQPlayerTest < ActiveSupport::TestCase
 
   test "should select random move if no learning yet" do
+    skip
     player = TQPlayer.new
     player.value = 1.0
     board = Board.new [0, 0, 0 ,0, 0,0,0,0,0]
@@ -16,6 +17,7 @@ class TQPlayerTest < ActiveSupport::TestCase
   end
 
   test "should select only available move if no learning yet" do
+    skip
     player = TQPlayer.new
     player.value = 1.0
     board = Board.new [0, 1.0, -1.0 ,1.0, -1.0,1.0,-1.0,1.0, -1.0]
@@ -24,6 +26,7 @@ class TQPlayerTest < ActiveSupport::TestCase
   end
 
   test "should select best move with forced training" do
+    skip
     player = TQPlayer.new
     player.value = 1.0
     board = Board.new [0, 0, 0 ,0, 0,0,0,0,0]
@@ -33,6 +36,7 @@ class TQPlayerTest < ActiveSupport::TestCase
   end
 
   test "should select randomly best move with forced training" do
+    skip
     player = TQPlayer.new
     player.value = 1.0
     board = Board.new [0, 0, 0 ,0, 0,0,0,0,0]
@@ -42,6 +46,7 @@ class TQPlayerTest < ActiveSupport::TestCase
   end
 
   test "should update q_table after one game" do
+    skip
     player = TQPlayer.new
     player.value = 1.0
     log = []
@@ -146,8 +151,8 @@ class TQPlayerTest < ActiveSupport::TestCase
   end
 
   test "should learn from a number of games against the min max player when going second" do
-    skip
-    # talso gets to 100% draws
+    #skip
+    # this also gets to 100% draws
     # only if we introduce an error rate in the MinMax player, does this change and
     # the TQ actually gets to win and get more draws
     # if the error rate gets to ten percent - so the minMax player make a mistake in every game, the TQ player crushes him

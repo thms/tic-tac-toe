@@ -40,7 +40,7 @@ class NN2PlayerTest < ActiveSupport::TestCase
 
   test "should learn from a number of games against the random player when going second" do
     # this gets to about 75% of wins
-    #skip
+    skip
     player_one = NN2Player.new
     player_two = RandomPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}

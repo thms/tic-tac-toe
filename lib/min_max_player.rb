@@ -39,7 +39,7 @@ class MinMaxPlayer
   end
 
   # returns best outcome move and value for the current player
-  # {4 => 1.0}
+  # Returns a hash with the moves and value of the move {4 => 1.0}
   def one_round(board, value)
     cache_key = board.hash_value
     if @cache.key? cache_key
