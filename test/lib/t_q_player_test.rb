@@ -118,7 +118,6 @@ class TQPlayerTest < ActiveSupport::TestCase
   end
 
   test "should learn from a number of games against the min max player when going first" do
-    skip
     # the best we can hope for is that TQ gets a fair number of draws
     player_one = TQPlayer.new
     player_two = MinMaxPlayer.new
@@ -151,7 +150,7 @@ class TQPlayerTest < ActiveSupport::TestCase
   end
 
   test "should learn from a number of games against the min max player when going second" do
-    #skip
+    skip
     # this also gets to 100% draws
     # only if we introduce an error rate in the MinMax player, does this change and
     # the TQ actually gets to win and get more draws

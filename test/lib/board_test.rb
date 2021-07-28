@@ -4,8 +4,46 @@ require_relative './../../lib/board'
 
 class BoardTest < ActiveSupport::TestCase
 
-  test "neural network should be able to learn the winning positions" do
+  test "should initialize state to zero" do
+    board = Board.new
+    assert_equal [0] * 9,  board.state
+  end
 
+  test "should recognize winning position" do
+    board = Board.new
+    board.state[0] = 1.0
+    board.state[1] = 1.0
+    board.state[2] = 1.0
+    assert_equal true, board.is_win?(1.0)
+  end
+
+  test "should draw the board" do
+    board = Board.new
+    board.state[0] = 1.0
+    board.state[1] = 1.0
+    board.state[2] = 1.0
+    board.draw
+  end
+
+  test "should return possible moves" do
+    board = Board.new
+    board.state[0] = 1.0
+    board.state[1] = 1.0
+    board.state[2] = 1.0
+    possible_moves = board.possible_moves
+    assert_equal [3,4,5,6,7,8], possible_moves
+  end
+
+  test "should recognize a draw" do
+    board = Board.new
+    board.state = [1.0, -1.0, -1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0]
+    board.draw
+    assert_equal true, board.is_draw?
+  end
+
+
+  test "neural network should be able to learn the winning positions" do
+    skip
     # generate training data by randomly placing stones unitl either a draw or win results
     inputs = []
     outputs = []

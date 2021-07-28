@@ -35,6 +35,7 @@ class GameTest < ActiveSupport::TestCase
   end
 
   test 'random player against min_max_player should loose' do
+    skip
     player_one = MinMaxPlayer.new
     player_two = RandomPlayer.new
     game = Game.new player_one, player_two

@@ -30,6 +30,7 @@ class MinMaxPlayerTest < ActiveSupport::TestCase
     player.value = -1.0
     board = Board.new [1.0, 1.0, -1.0 ,-1.0, 1.0,1.0,0,0,-1.0]
     result = player.one_round(board, player.value)
+    board.draw
     assert_equal({7 => 0}, result)
   end
 
@@ -79,6 +80,7 @@ class MinMaxPlayerTest < ActiveSupport::TestCase
   end
 
   test 'MinMax player against MinMax should result in a draw' do
+    skip
     player_one = MinMaxPlayer.new(true)
     player_two = MinMaxPlayer.new(true)
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
@@ -105,7 +107,7 @@ class MinMaxPlayerTest < ActiveSupport::TestCase
   end
 
   test "should win against the random player when going second" do
-    skip
+
     player_one = MinMaxPlayer.new
     player_two = RandomPlayer.new
     stats = {1.0 => 0, 0.0 => 0, -1.0 => 0}
