@@ -1,0 +1,16 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: tic-tac-toe
+  annotations:
+    github.com/project-slug: thms/tic-tac-toe
+    backstage.io/techdocs-ref: dir:.
+  links:
+    - title: Getting Started
+      url: https://github.com/thms/tic-tac-toe/README.md
+      type: Readme
+      icon: github
+spec:
+  type: application
+  lifecycle: experimental
+  owner: thms
